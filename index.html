@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SHARON — Temporary Collaboration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --purple: #7c5cff;
+      --blue: #4f9cff;
+      --bg: #06060f;
+      --surface: rgba(20, 20, 40, 0.7);
+      --text: #eaeaff;
+      --muted: rgba(234, 234, 255, 0.45);
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* Layered background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 10%, rgba(124,92,255,0.13) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 85% 5%,  rgba(79,156,255,0.10) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 100%, rgba(124,92,255,0.07) 0%, transparent 50%),
+        linear-gradient(175deg, #0d0d22 0%, #06060f 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Subtle grid overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(124,92,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,92,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+
+    /* Brand */
+    .brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 52px;
+    }
+
+    .brand-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(52px, 8vw, 88px);
+      font-weight: 700;
+      letter-spacing: 10px;
+      color: #eaeaff;
+      text-shadow:
+        0 0 12px rgba(124,92,255,0.4),
+        0 0 30px rgba(124,92,255,0.2),
+        0 0 60px rgba(79,156,255,0.12);
+      animation: titleReveal 0.9s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .brand-tagline {
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 300;
+      animation: fadeUp 0.9s 0.2s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    /* Pill divider */
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(124,92,255,0.6), transparent);
+      margin: 0 auto 6px;
+      animation: fadeUp 0.9s 0.3s both;
+    }
+
+    /* Buttons */
+    .buttons {
+      display: flex;
+      gap: 20px;
+      animation: fadeUp 0.9s 0.4s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .btn {
+      position: relative;
+      padding: 16px 52px;
+      border-radius: 100px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease;
+      color: var(--text);
+    }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-ghost::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(124,92,255,0.15), rgba(79,156,255,0.15));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .btn-ghost:hover::before { opacity: 1; }
+    .btn-ghost:hover {
+      border-color: rgba(124,92,255,0.5);
+      box-shadow: 0 0 20px rgba(124,92,255,0.2), inset 0 0 20px rgba(124,92,255,0.05);
+      transform: translateY(-3px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #7c5cff 0%, #4f9cff 100%);
+      box-shadow: 0 4px 24px rgba(124,92,255,0.35);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 8px 32px rgba(124,92,255,0.55);
+      transform: translateY(-3px);
+    }
+
+    .btn:active { transform: translateY(0) scale(0.97); }
+
+    /* Floating orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+
+    .orb-1 {
+      width: 300px; height: 300px;
+      background: rgba(124,92,255,0.08);
+      top: 5%; left: 5%;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 250px; height: 250px;
+      background: rgba(79,156,255,0.07);
+      top: 10%; right: 8%;
+      animation-delay: -3s;
+    }
+
+    .orb-3 {
+      width: 200px; height: 200px;
+      background: rgba(124,92,255,0.05);
+      bottom: 10%; left: 50%;
+      animation-delay: -5s;
+    }
+
+    /* Footer */
+    .footer {
+      position: fixed;
+      bottom: 24px;
+      font-size: 11px;
+      color: rgba(234,234,255,0.2);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      animation: fadeUp 1s 0.7s both;
+    }
+
+    @keyframes titleReveal {
+      from { opacity: 0; transform: translateY(20px); filter: blur(8px); }
+      to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="page">
+    <div class="brand">
+      <div class="brand-name">SHARON</div>
+      <div class="divider"></div>
+      <div class="brand-tagline">Temporary · Real-time · Collaborative</div>
+    </div>
+
+    <div class="buttons">
+      <button class="btn btn-ghost" id="joinBtn">Join Session</button>
+      <button class="btn btn-primary" id="createBtn">Create Session</button>
+    </div>
+  </div>
+
+  <div class="footer">Sessions expire in 24 hours &nbsp;·&nbsp; No account required</div>
+
+  <script>
+    document.getElementById('createBtn').onclick = () => window.location.href = 'create.html';
+    document.getElementById('joinBtn').onclick  = () => window.location.href = 'join.html';
+  </script>
+</body>
+</html>

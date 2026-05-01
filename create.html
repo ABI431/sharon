@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SHARON — Create Session</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --purple: #7c5cff;
+      --blue: #4f9cff;
+      --bg: #06060f;
+      --surface: rgba(20,20,40,0.75);
+      --text: #eaeaff;
+      --muted: rgba(234,234,255,0.4);
+      --border: rgba(255,255,255,0.08);
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 15% 10%, rgba(124,92,255,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 50% at 85% 5%,  rgba(79,156,255,0.09) 0%, transparent 55%),
+        linear-gradient(175deg, #0d0d22 0%, #06060f 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(124,92,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,92,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      width: min(460px, 90vw);
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(124,92,255,0.15);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.04) inset,
+        0 20px 60px rgba(0,0,0,0.5),
+        0 0 40px rgba(124,92,255,0.08);
+      animation: cardIn 0.7s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      margin-bottom: 28px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--text); }
+
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .card-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    /* Credentials display */
+    .credentials {
+      display: none;
+      background: rgba(124,92,255,0.07);
+      border: 1px solid rgba(124,92,255,0.2);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      animation: fadeIn 0.4s ease both;
+    }
+
+    .credentials.show { display: block; }
+
+    .cred-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+    }
+
+    .cred-row + .cred-row {
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .cred-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .cred-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .copy-btn {
+      cursor: pointer;
+      opacity: 0.4;
+      transition: opacity 0.2s;
+      background: none;
+      border: none;
+      padding: 4px;
+      color: var(--text);
+    }
+    .copy-btn:hover { opacity: 1; }
+
+    .pass-text { letter-spacing: 4px; }
+
+    .eye-btn {
+      cursor: pointer;
+      opacity: 0.4;
+      transition: opacity 0.2s;
+      background: none;
+      border: none;
+      padding: 2px 4px;
+      color: var(--text);
+    }
+    .eye-btn:hover { opacity: 1; }
+
+    /* Timer */
+    .timer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0 0;
+      margin-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .timer-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .timer-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      letter-spacing: 2px;
+      color: #4f9cff;
+    }
+
+    /* CTA */
+    .btn-create {
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      background: linear-gradient(135deg, #7c5cff 0%, #4f9cff 100%);
+      color: white;
+      box-shadow: 0 4px 20px rgba(124,92,255,0.35);
+      transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .btn-create:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(124,92,255,0.5);
+    }
+    .btn-create:active { transform: scale(0.98); }
+    .btn-create:disabled { opacity: 0.5; pointer-events: none; }
+
+    .btn-enter {
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid rgba(124,92,255,0.3);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      background: rgba(124,92,255,0.1);
+      color: white;
+      margin-top: 12px;
+      transition: all 0.3s ease;
+      display: none;
+    }
+    .btn-enter.show { display: block; }
+    .btn-enter:hover { background: rgba(124,92,255,0.2); }
+
+    .note {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .spinner-inline {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+    <div class="card">
+      <a class="back-link" href="index.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        Back
+      </a>
+
+      <div class="card-title">Create Session</div>
+      <div class="card-sub" id="cardSub">A session ID and password will be generated automatically. Share them to invite collaborators.</div>
+
+      <!-- Credentials (shown after creation) -->
+      <div class="credentials" id="credentials">
+        <div class="cred-row">
+          <span class="cred-label">Session ID</span>
+          <span class="cred-value">
+            <span id="displaySid">------</span>
+            <button class="copy-btn" onclick="copyText('sid')" title="Copy">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+          </span>
+        </div>
+        <div class="cred-row">
+          <span class="cred-label">Password</span>
+          <span class="cred-value">
+            <span class="pass-text" id="displayPass">····</span>
+            <button class="eye-btn" id="eyeBtn" onclick="togglePass()" title="Toggle visibility">
+              <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+            <button class="copy-btn" onclick="copyText('pass')" title="Copy">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+          </span>
+        </div>
+        <div class="timer-row">
+          <span class="timer-label">Expires in</span>
+          <span class="timer-val" id="timerVal">24:00:00</span>
+        </div>
+      </div>
+
+      <button class="btn-create" id="createBtn">Generate Session</button>
+      <button class="btn-enter show" id="enterBtn" style="display:none" onclick="enterSession()">Enter Workspace →</button>
+
+      <p class="note">Session expires automatically after 24 hours.</p>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    // ⚠️ Replace with your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAk9FYvpAyb2BT5IF29CcKDl7TB5TxKqAU",
+      authDomain: "sharon-6b796.firebaseapp.com",
+      databaseURL: "https://sharon-6b796-default-rtdb.firebaseio.com",
+      projectId: "sharon-6b796",
+      storageBucket: "sharon-6b796.firebasestorage.app",
+      messagingSenderId: "281766985130",
+      appId: "1:281766985130:web:088538f7a5b5d27379ffd3",
+      measurementId: "G-QNCTMVWXW2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app);
+
+    let sessionId, password, passHidden = true, timerInterval;
+
+    function gen(len, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') {
+      return Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    }
+
+    window.togglePass = function() {
+      const el   = document.getElementById('displayPass');
+      const icon = document.getElementById('eyeIcon');
+      passHidden = !passHidden;
+      el.textContent = passHidden ? '····' : password;
+      icon.innerHTML = passHidden
+        ? `<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>`
+        : `<path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a17.5 17.5 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a16.6 16.6 0 0 1-1.67 2.68"/><path d="M1 1l22 22"/>`;
+    };
+
+    window.copyText = function(type) {
+      const val = type === 'sid' ? sessionId : password;
+      navigator.clipboard.writeText(val).catch(() => {});
+    };
+
+    window.enterSession = function() {
+      if (sessionId) window.location.href = `session.html?id=${sessionId}`;
+    };
+
+    function startTimer(expiresAt) {
+      function tick() {
+        const remaining = Math.max(0, expiresAt - Date.now());
+        const h = Math.floor(remaining / 3600000);
+        const m = Math.floor((remaining % 3600000) / 60000);
+        const s = Math.floor((remaining % 60000) / 1000);
+        document.getElementById('timerVal').textContent =
+          `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        if (remaining <= 0) clearInterval(timerInterval);
+      }
+      tick();
+      timerInterval = setInterval(tick, 1000);
+    }
+
+    document.getElementById('createBtn').onclick = async function() {
+      const btn = this;
+      btn.innerHTML = '<span class="spinner-inline"></span>Creating...';
+      btn.disabled = true;
+
+      sessionId = gen(6);
+      password  = gen(4);
+      const expiresAt = Date.now() + 86400000;
+
+      try {
+        await set(ref(db, `sessions/${sessionId}`), {
+          password,
+          expiresAt,
+          createdAt: Date.now(),
+          text: '',
+          files: {}
+        });
+
+        // Show credentials
+        document.getElementById('displaySid').textContent  = sessionId;
+        document.getElementById('displayPass').textContent = '····';
+        document.getElementById('credentials').classList.add('show');
+        document.getElementById('cardSub').textContent = 'Share these credentials with your collaborators.';
+        document.getElementById('enterBtn').style.display = 'block';
+        btn.style.display = 'none';
+
+        startTimer(expiresAt);
+
+      } catch(e) {
+        btn.innerHTML  = 'Generate Session';
+        btn.disabled   = false;
+        console.error(e);
+        alert('Failed to create session. Check your Firebase config.');
+      }
+    };
+  </script>
+</body>
+</html>

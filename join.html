@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SHARON — Join Session</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --purple: #7c5cff;
+      --blue: #4f9cff;
+      --bg: #06060f;
+      --surface: rgba(20,20,40,0.75);
+      --text: #eaeaff;
+      --muted: rgba(234,234,255,0.4);
+      --border: rgba(255,255,255,0.08);
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 15% 10%, rgba(124,92,255,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 50% at 85% 5%,  rgba(79,156,255,0.09) 0%, transparent 55%),
+        linear-gradient(175deg, #0d0d22 0%, #06060f 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(124,92,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,92,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      width: min(420px, 90vw);
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(124,92,255,0.15);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.04) inset,
+        0 20px 60px rgba(0,0,0,0.5),
+        0 0 40px rgba(124,92,255,0.08);
+      animation: cardIn 0.7s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      margin-bottom: 28px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--text); }
+
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .card-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field input::placeholder {
+      color: rgba(234,234,255,0.18);
+      letter-spacing: 2px;
+      font-size: 15px;
+    }
+
+    .field input:focus {
+      border-color: rgba(124,92,255,0.5);
+      box-shadow: 0 0 0 3px rgba(124,92,255,0.1);
+    }
+
+    .error-msg {
+      font-size: 12px;
+      color: #ff6b6b;
+      margin-top: 6px;
+      min-height: 16px;
+      transition: opacity 0.3s;
+    }
+
+    .btn-join {
+      width: 100%;
+      padding: 15px;
+      margin-top: 10px;
+      border-radius: 12px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      background: linear-gradient(135deg, #7c5cff 0%, #4f9cff 100%);
+      color: white;
+      box-shadow: 0 4px 20px rgba(124,92,255,0.35);
+      transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-join:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(124,92,255,0.5);
+    }
+
+    .btn-join:active { transform: scale(0.98); }
+
+    .btn-join.loading { pointer-events: none; opacity: 0.7; }
+
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto;
+    }
+
+    .btn-join.loading .btn-text { display: none; }
+    .btn-join.loading .spinner { display: block; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+    <div class="card">
+      <a class="back-link" href="index.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        Back
+      </a>
+
+      <div class="card-title">Join Session</div>
+      <div class="card-sub">Enter the session ID and password to collaborate.</div>
+
+      <div class="field">
+        <label>Session ID</label>
+        <input id="sidInput" maxlength="6" placeholder="e.g. A3X9KZ" autocomplete="off" spellcheck="false">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input id="passInput" maxlength="4" placeholder="4 characters" autocomplete="off" spellcheck="false" type="password">
+        <div class="error-msg" id="errMsg"></div>
+      </div>
+
+      <button class="btn-join" id="joinBtn">
+        <span class="btn-text">Enter Session</span>
+        <div class="spinner"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    // ⚠️ Replace with your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAk9FYvpAyb2BT5IF29CcKDl7TB5TxKqAU",
+      authDomain: "sharon-6b796.firebaseapp.com",
+      databaseURL: "https://sharon-6b796-default-rtdb.firebaseio.com",
+      projectId: "sharon-6b796",
+      storageBucket: "sharon-6b796.firebasestorage.app",
+      messagingSenderId: "281766985130",
+      appId: "1:281766985130:web:088538f7a5b5d27379ffd3",
+      measurementId: "G-QNCTMVWXW2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const sidInput  = document.getElementById('sidInput');
+    const passInput = document.getElementById('passInput');
+    const errMsg    = document.getElementById('errMsg');
+    const joinBtn   = document.getElementById('joinBtn');
+
+    // Auto-uppercase session ID
+    sidInput.addEventListener('input', () => {
+      sidInput.value = sidInput.value.toUpperCase();
+    });
+
+    async function joinSession() {
+      const sid  = sidInput.value.trim().toUpperCase();
+      const pass = passInput.value.trim().toUpperCase();
+
+      errMsg.textContent = '';
+
+      if (sid.length < 6)  { errMsg.textContent = 'Session ID must be 6 characters.'; return; }
+      if (pass.length < 4) { errMsg.textContent = 'Password must be 4 characters.'; return; }
+
+      joinBtn.classList.add('loading');
+
+      try {
+        const snap = await get(ref(db, `sessions/${sid}`));
+        if (!snap.exists()) {
+          errMsg.textContent = 'Session not found or expired.';
+          joinBtn.classList.remove('loading');
+          return;
+        }
+
+        const session = snap.val();
+
+        if (session.expired || Date.now() > session.expiresAt) {
+          errMsg.textContent = 'This session has expired.';
+          joinBtn.classList.remove('loading');
+          return;
+        }
+
+        if (session.password !== pass) {
+          errMsg.textContent = 'Incorrect password.';
+          joinBtn.classList.remove('loading');
+          return;
+        }
+
+        // ✅ Valid — redirect to workspace
+        window.location.href = `session.html?id=${sid}`;
+
+      } catch (e) {
+        errMsg.textContent = 'Connection error. Please try again.';
+        joinBtn.classList.remove('loading');
+      }
+    }
+
+    joinBtn.onclick = joinSession;
+
+    // Enter key shortcut
+    [sidInput, passInput].forEach(el => {
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') joinSession(); });
+    });
+  </script>
+</body>
+</html>

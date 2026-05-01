@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SHARON — Session</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --purple: #7c5cff;
+      --blue: #4f9cff;
+      --bg: #06060f;
+      --surface: rgba(18,18,36,0.85);
+      --text: #eaeaff;
+      --muted: rgba(234,234,255,0.38);
+      --border: rgba(255,255,255,0.07);
+      --radius: 20px;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 10% 8%,  rgba(124,92,255,0.11) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 45% at 90% 5%,  rgba(79,156,255,0.09) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 40% at 50% 100%, rgba(124,92,255,0.06) 0%, transparent 45%),
+        linear-gradient(170deg, #0d0d22 0%, #06060f 60%);
+      pointer-events: none; z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(124,92,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,92,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ─── TOP BAR ─────────────────────────────────────── */
+    .topbar {
+      position: relative; z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 36px;
+      height: 64px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,24,0.6);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .brand-sm {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #eaeaff;
+      text-shadow: 0 0 12px rgba(124,92,255,0.4);
+    }
+
+    .divider-v {
+      width: 1px; height: 20px;
+      background: var(--border);
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .meta-label {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(234,234,255,0.25);
+    }
+
+    .meta-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      color: #eaeaff;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: var(--muted);
+      transition: color 0.2s;
+      display: inline-flex;
+      align-items: center;
+    }
+    .icon-btn:hover { color: var(--text); }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .timer-display {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: #4f9cff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .terminate-btn {
+      font-size: 12px;
+      color: #ff6b6b;
+      cursor: pointer;
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,107,107,0.2);
+      background: rgba(255,107,107,0.05);
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .terminate-btn:hover {
+      background: rgba(255,107,107,0.12);
+      border-color: rgba(255,107,107,0.4);
+    }
+
+    /* ─── WORKSPACE ──────────────────────────────────── */
+    .workspace {
+      position: relative; z-index: 1;
+      height: calc(100vh - 64px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .box {
+      width: min(900px, 72vw);
+      height: min(620px, 82vh);
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(124,92,255,0.12);
+      border-radius: 26px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.03) inset,
+        0 24px 80px rgba(0,0,0,0.55),
+        0 0 60px rgba(124,92,255,0.07);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: boxIn 0.7s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    /* ─── TEXT INPUT AREA ────────────────────────────── */
+    .text-section {
+      padding: 20px 24px 0;
+      flex-shrink: 0;
+    }
+
+    .text-area {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: rgba(234,234,255,0.35);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      resize: none;
+      line-height: 1.6;
+      height: 52px;
+      transition: color 0.25s;
+      letter-spacing: 0.2px;
+    }
+    .text-area:focus {
+      color: rgba(234,234,255,0.9);
+    }
+    .text-area::placeholder {
+      color: rgba(234,234,255,0.18);
+    }
+
+    /* Thin separator */
+    .separator {
+      height: 1px;
+      margin: 12px 24px 0;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    /* ─── UPLOAD AREA ────────────────────────────────── */
+    .upload-section {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      padding: 16px;
+      gap: 14px;
+      transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    /* BEFORE: single full drop zone */
+    .drop-zone {
+      flex: 1;
+      border: 1.5px dashed rgba(79,156,255,0.3);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .drop-zone:hover,
+    .drop-zone.drag-over {
+      border-color: rgba(124,92,255,0.6);
+      background: rgba(124,92,255,0.05);
+    }
+
+    .drop-zone.drag-over {
+      background: rgba(124,92,255,0.1);
+      box-shadow: 0 0 20px rgba(124,92,255,0.15) inset;
+    }
+
+    .drop-icon {
+      opacity: 0.35;
+      transition: opacity 0.2s;
+    }
+    .drop-zone:hover .drop-icon,
+    .drop-zone.drag-over .drop-icon { opacity: 0.7; }
+
+    .drop-label {
+      font-size: 14px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .drop-sub {
+      font-size: 11px;
+      color: rgba(234,234,255,0.2);
+      letter-spacing: 1px;
+    }
+
+    /* AFTER: split layout */
+    .file-list-panel {
+      flex: 0 0 0%;
+      overflow: hidden;
+      opacity: 0;
+      transition: flex 0.45s cubic-bezier(0.16,1,0.3,1), opacity 0.35s ease;
+    }
+
+    .upload-section.has-files .file-list-panel {
+      flex: 0 0 50%;
+      opacity: 1;
+    }
+
+    .upload-section.has-files .drop-zone {
+      flex: 0 0 calc(50% - 14px);
+    }
+
+    .file-list-inner {
+      height: 100%;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .file-list-inner::-webkit-scrollbar { width: 4px; }
+    .file-list-inner::-webkit-scrollbar-track { background: transparent; }
+    .file-list-inner::-webkit-scrollbar-thumb { background: rgba(124,92,255,0.2); border-radius: 4px; }
+
+    .file-list-header {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+      flex-shrink: 0;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
+      transition: background 0.2s;
+      cursor: pointer;
+      animation: fileIn 0.35s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .file-item:hover { background: rgba(124,92,255,0.08); border-color: rgba(124,92,255,0.2); }
+
+    .file-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(124,92,255,0.2), rgba(79,156,255,0.2));
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .file-info { flex: 1; min-width: 0; }
+
+    .file-name {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-size {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .file-status {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(79,156,255,0.1);
+      color: #4f9cff;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    .file-status.uploading {
+      background: rgba(255,167,38,0.1);
+      color: #ffa726;
+    }
+
+    /* Hidden file input */
+    #fileInput { display: none; }
+
+    /* Online indicator */
+    .online-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 6px rgba(34,197,94,0.6);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .online-label {
+      font-size: 11px;
+      color: rgba(34,197,94,0.7);
+      letter-spacing: 0.5px;
+    }
+
+    /* Sync indicator */
+    .sync-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(124,92,255,0.5);
+      transition: background 0.3s;
+    }
+    .sync-dot.syncing {
+      background: #7c5cff;
+      box-shadow: 0 0 8px rgba(124,92,255,0.8);
+      animation: syncPulse 0.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @keyframes syncPulse {
+      from { opacity: 0.5; }
+      to { opacity: 1; }
+    }
+
+    @keyframes boxIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes fileIn {
+      from { opacity: 0; transform: translateX(-8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Terminate modal */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: rgba(18,18,36,0.95);
+      border: 1px solid rgba(255,107,107,0.2);
+      border-radius: 20px;
+      padding: 32px;
+      width: min(360px, 90vw);
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      animation: cardIn 0.4s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .modal h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .modal p { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+    .modal-btns { display: flex; gap: 10px; }
+    .modal-cancel {
+      flex: 1; padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .modal-cancel:hover { background: rgba(255,255,255,0.09); }
+    .modal-confirm {
+      flex: 1; padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #ff4d4d;
+      color: white;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .modal-confirm:hover { opacity: 0.85; }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: scale(0.96) translateY(10px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="brand-sm">SHARON</span>
+      <div class="divider-v"></div>
+      <div class="meta">
+        <div class="meta-item">
+          <span class="meta-label">ID</span>
+          <span class="meta-val" id="topSid">------</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Pass</span>
+          <span class="meta-val" id="topPass">····</span>
+          <button class="icon-btn" id="eyeBtn" onclick="togglePass()" title="Toggle password">
+            <svg id="eyeIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="online-dot"></div>
+        <span class="online-label">Live</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="sync-dot" id="syncDot"></div>
+      </div>
+      <div class="timer-display">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity="0.5">
+          <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+        </svg>
+        <span id="timerVal">24:00:00</span>
+      </div>
+      <button class="terminate-btn" onclick="showTerminate()">Terminate</button>
+    </div>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div class="workspace">
+    <div class="box">
+
+      <!-- Shared text -->
+      <div class="text-section">
+        <textarea class="text-area" id="sharedText" placeholder="Type something to share with everyone in this session..." rows="2"></textarea>
+      </div>
+
+      <div class="separator"></div>
+
+      <!-- Upload -->
+      <div class="upload-section" id="uploadSection">
+
+        <!-- File list panel (left, hidden until files exist) -->
+        <div class="file-list-panel" id="fileListPanel">
+          <div class="file-list-inner" id="fileListInner">
+            <div class="file-list-header">Shared Files</div>
+            <!-- file items injected here -->
+          </div>
+        </div>
+
+        <!-- Drop zone (full width initially, then right half) -->
+        <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+          <div class="drop-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4f9cff" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="drop-label">
+            Drag & drop files here<br>
+            <span class="drop-sub">or click to browse</span>
+          </div>
+        </div>
+
+      </div>
+
+      <input type="file" id="fileInput" multiple>
+    </div>
+  </div>
+
+  <!-- Terminate Modal -->
+  <div class="modal-overlay" id="terminateModal">
+    <div class="modal">
+      <h3>Terminate Session?</h3>
+      <p>This will permanently delete the session and all shared files. All collaborators will lose access immediately.</p>
+      <div class="modal-btns">
+        <button class="modal-cancel" onclick="hideTerminate()">Cancel</button>
+        <button class="modal-confirm" onclick="confirmTerminate()">Terminate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, onValue, update, remove, get }
+                                from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL }
+                                from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    // ⚠️ Replace with your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAk9FYvpAyb2BT5IF29CcKDl7TB5TxKqAU",
+      authDomain: "sharon-6b796.firebaseapp.com",
+      databaseURL: "https://sharon-6b796-default-rtdb.firebaseio.com",
+      projectId: "sharon-6b796",
+      storageBucket: "sharon-6b796.firebasestorage.app",
+      messagingSenderId: "281766985130",
+      appId: "1:281766985130:web:088538f7a5b5d27379ffd3",
+      measurementId: "G-QNCTMVWXW2"
+    };
+
+    const app     = initializeApp(firebaseConfig);
+    const db      = getDatabase(app);
+    const storage = getStorage(app);
+
+    // ─── Get session ID from URL
+    const params    = new URLSearchParams(window.location.search);
+    const sessionId = params.get('id');
+
+    if (!sessionId) {
+      window.location.href = 'index.html';
+    }
+
+    const sessionRef = ref(db, `sessions/${sessionId}`);
+    let sessionPass  = '';
+    let passHidden   = true;
+    let timerInterval;
+    let textDebounce;
+    let isRemoteUpdate = false;
+
+    // ─── Load session & verify
+    get(sessionRef).then(snap => {
+      if (!snap.exists()) {
+        alert('Session not found or expired.');
+        window.location.href = 'index.html';
+        return;
+      }
+      const s = snap.val();
+      if (Date.now() > s.expiresAt) {
+        alert('This session has expired.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      sessionPass = s.password;
+      document.getElementById('topSid').textContent  = sessionId;
+      document.getElementById('topPass').textContent = '····';
+      startTimer(s.expiresAt);
+    });
+
+    // ─── Real-time text sync
+    onValue(ref(db, `sessions/${sessionId}/text`), snap => {
+      const val = snap.val() || '';
+      const el  = document.getElementById('sharedText');
+      if (el !== document.activeElement) {
+        isRemoteUpdate = true;
+        el.value = val;
+        isRemoteUpdate = false;
+      }
+    });
+
+    document.getElementById('sharedText').addEventListener('input', () => {
+      if (isRemoteUpdate) return;
+      setSyncing(true);
+      clearTimeout(textDebounce);
+      textDebounce = setTimeout(() => {
+        update(sessionRef, { text: document.getElementById('sharedText').value })
+          .then(() => setSyncing(false));
+      }, 400);
+    });
+
+    // ─── Real-time file list sync
+    onValue(ref(db, `sessions/${sessionId}/files`), snap => {
+      const files = snap.val() || {};
+      renderFiles(files);
+    });
+
+    function renderFiles(files) {
+      const keys = Object.keys(files);
+      const inner = document.getElementById('fileListInner');
+      const section = document.getElementById('uploadSection');
+
+      // Remove old file items (keep header)
+      inner.querySelectorAll('.file-item').forEach(el => el.remove());
+
+      if (keys.length > 0) {
+        section.classList.add('has-files');
+        keys.forEach(key => {
+          const f = files[key];
+          const item = document.createElement('div');
+          item.className = 'file-item';
+          item.innerHTML = `
+            <div class="file-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c5cff" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <div class="file-info">
+              <div class="file-name">${escapeHtml(f.name)}</div>
+              <div class="file-size">${formatBytes(f.size)}</div>
+            </div>
+            <span class="file-status">${f.uploading ? 'Uploading...' : 'Ready'}</span>
+          `;
+          if (f.status === 'uploading') {
+            item.querySelector('.file-status').classList.add('uploading');
+          }
+          if (f.url) {
+            item.onclick = () => window.open(f.url, '_blank');
+          }
+          inner.appendChild(item);
+        });
+      } else {
+        section.classList.remove('has-files');
+      }
+    }
+
+    // ─── File upload
+    function handleFiles(fileList) {
+      Array.from(fileList).forEach(file => {
+        const key       = `file_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+        const storePath = `sessions/${sessionId}/${key}_${file.name}`;
+        const fileRef   = ref(db, `sessions/${sessionId}/files/${key}`);
+
+        // Optimistic UI
+        update(fileRef, { name: file.name, size: file.size, uploading: true, url: null });
+
+        const uploadTask = uploadBytesResumable(sRef(storage, storePath), file);
+
+        uploadTask.on('state_changed',
+          null,
+          err => console.error(err),
+          async () => {
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            update(fileRef, { uploading: false, url });
+          }
+        );
+      });
+    }
+
+    // ─── Drag & Drop
+    const dropZone = document.getElementById('dropZone');
+
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    document.getElementById('fileInput').addEventListener('change', e => {
+      handleFiles(e.target.files);
+      e.target.value = '';
+    });
+
+    // ─── Timer
+    function startTimer(expiresAt) {
+      function tick() {
+        const rem = Math.max(0, expiresAt - Date.now());
+        const h   = Math.floor(rem / 3600000);
+        const m   = Math.floor((rem % 3600000) / 60000);
+        const s   = Math.floor((rem % 60000) / 1000);
+        document.getElementById('timerVal').textContent =
+          `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        if (rem <= 0) {
+          clearInterval(timerInterval);
+          alert('Session expired.');
+          window.location.href = 'index.html';
+        }
+      }
+      tick();
+      timerInterval = setInterval(tick, 1000);
+    }
+
+    // ─── Password toggle
+    window.togglePass = function() {
+      const el   = document.getElementById('topPass');
+      const icon = document.getElementById('eyeIcon');
+      passHidden = !passHidden;
+      el.textContent = passHidden ? '····' : sessionPass;
+      icon.innerHTML = passHidden
+        ? `<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>`
+        : `<path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a17.5 17.5 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a16.6 16.6 0 0 1-1.67 2.68"/><path d="M1 1l22 22"/>`;
+    };
+
+    // ─── Terminate
+    window.showTerminate = function() {
+      document.getElementById('terminateModal').classList.add('show');
+    };
+
+    window.hideTerminate = function() {
+      document.getElementById('terminateModal').classList.remove('show');
+    };
+
+    window.confirmTerminate = async function() {
+      await remove(sessionRef);
+      window.location.href = 'index.html';
+    };
+
+    // ─── Sync indicator
+    function setSyncing(val) {
+      document.getElementById('syncDot').classList.toggle('syncing', val);
+    }
+
+    // ─── Helpers
+    function formatBytes(bytes) {
+      if (!bytes) return '—';
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1048576) return `${(bytes/1024).toFixed(1)} KB`;
+      return `${(bytes/1048576).toFixed(1)} MB`;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+  </script>
+</body>
+</html>
