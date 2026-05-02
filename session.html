@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>SHARON — Session</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -249,6 +248,30 @@
       letter-spacing: 0.5px; flex-shrink: 0;
     }
     .file-status.uploading { background: rgba(255,167,38,0.1); color: #ffa726; }
+    .file-status.uploaded  { background: rgba(34,197,94,0.1);  color: #22c55e; }
+
+    .file-delete-btn {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,77,77,0.2);
+      background: rgba(255,77,77,0.06);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      animation: fadeInBtn 0.3s ease both;
+    }
+    .file-delete-btn:hover {
+      background: rgba(255,77,77,0.18);
+      border-color: rgba(255,77,77,0.5);
+      transform: scale(1.1);
+    }
+    .file-delete-btn:active { transform: scale(0.93); }
+
+    @keyframes fadeInBtn {
+      from { opacity: 0; transform: scale(0.7); }
+      to   { opacity: 1; transform: scale(1); }
+    }
 
     #fileInput { display: none; }
 
@@ -572,6 +595,10 @@
     /* ══════════════════════════════════════════
        STEP 4 — render file list
     ══════════════════════════════════════════ */
+
+    /* Track keys that just finished uploading so we can show "Uploaded" for 1s */
+    const recentlyUploaded = new Set();
+
     function renderFiles(files) {
       const inner   = $('fileListInner');
       const section = $('uploadSection');
@@ -591,6 +618,21 @@
         const f    = files[key];
         const item = document.createElement('div');
         item.className = 'file-item';
+        item.dataset.key = key;
+
+        /* Build right-side control:
+           - still uploading  → orange "Uploading…" badge
+           - just finished    → green "Uploaded" badge for 1s, then delete icon
+           - already settled  → delete icon immediately              */
+        let rightHtml;
+        if (f.uploading) {
+          rightHtml = '<span class="file-status uploading">Uploading…</span>';
+        } else if (recentlyUploaded.has(key)) {
+          rightHtml = '<span class="file-status uploaded">Uploaded</span>';
+        } else {
+          rightHtml = deleteIconHtml(key);
+        }
+
         item.innerHTML =
           '<div class="file-icon">' +
             '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c5cff" stroke-width="2">' +
@@ -602,16 +644,69 @@
             '<div class="file-name">' + escHtml(f.name) + '</div>' +
             '<div class="file-size">' + formatBytes(f.size) + '</div>' +
           '</div>' +
-          '<span class="file-status' + (f.uploading ? ' uploading' : '') + '">' +
-            (f.uploading ? 'Uploading…' : 'Ready') +
-          '</span>';
+          rightHtml;
 
+        /* Clicking the file row (not the delete btn) opens the file */
         if (f.url) {
           item.title   = 'Click to download';
-          item.onclick = () => window.open(f.url, '_blank');
+          item.onclick = e => {
+            if (!e.target.closest('.file-delete-btn')) window.open(f.url, '_blank');
+          };
         }
+
         inner.appendChild(item);
+
+        /* If "Uploaded" badge is showing, swap to delete icon after 1s */
+        if (!f.uploading && recentlyUploaded.has(key)) {
+          setTimeout(() => {
+            recentlyUploaded.delete(key);
+            const row = inner.querySelector('[data-key="' + key + '"]');
+            if (!row) return;
+            const badge = row.querySelector('.file-status.uploaded');
+            if (badge) {
+              const btn = document.createElement('div');
+              btn.innerHTML = deleteIconHtml(key);
+              badge.replaceWith(btn.firstElementChild);
+            }
+          }, 1000);
+        }
       });
+    }
+
+    function deleteIconHtml(key) {
+      return '<button class="file-delete-btn" data-delkey="' + key + '" title="Delete file">' +
+               '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                 '<polyline points="3 6 5 6 21 6"/>' +
+                 '<path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>' +
+                 '<path d="M10 11v6"/><path d="M14 11v6"/>' +
+                 '<path d="M9 6V4h6v2"/>' +
+               '</svg>' +
+             '</button>';
+    }
+
+    /* Delete button clicks bubble up to fileListInner (event delegation) */
+    $('fileListInner').addEventListener('click', async e => {
+      const btn = e.target.closest('.file-delete-btn');
+      if (!btn) return;
+      e.stopPropagation();
+      await deleteFile(btn.dataset.delkey);
+    });
+
+    async function deleteFile(key) {
+      const fileDbRef  = ref(db, 'sessions/' + sessionId + '/files/' + key);
+      const snap       = await get(fileDbRef);
+      if (!snap.exists()) return;
+
+      const f = snap.val();
+
+      /* 1. Delete from Firebase Storage */
+      if (f.storagePath) {
+        try { await deleteObject(sRef(storage, f.storagePath)); }
+        catch (e) { console.log('Storage delete note:', e.code); }
+      }
+
+      /* 2. Remove from Realtime Database — triggers renderFiles via onValue */
+      await remove(fileDbRef);
     }
 
     /* ══════════════════════════════════════════
@@ -642,6 +737,7 @@
           },
           () => {
             getDownloadURL(task.snapshot.ref).then(url => {
+              recentlyUploaded.add(key);          /* triggers "Uploaded" badge */
               update(fileDbRef, { uploading: false, url: url });
             });
           }
