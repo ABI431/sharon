@@ -70,7 +70,7 @@ It is designed for quick, temporary collaboration — lightweight, fast, and acc
 
 ## 📁 Project Structure
 
-```id="2o6k5v"
+```
 sharon/
 │── index.html       # Landing page
 │── create.html      # Create session
@@ -116,10 +116,68 @@ Copy config and paste into:
 
 ---
 
+## ⚠️ Firebase Test Mode — Is it OK?
+
+Yes, test mode is perfectly fine for development.
+
+It simply means:
+👉 No authentication is required to read/write data
+
+---
+
+### ⏳ Important
+
+Test mode rules **expire after 30 days**.
+After that, you may see permission errors.
+
+---
+
+### 🔧 Update Database Rules (before expiry)
+
+Go to:
+👉 Firebase Console → Realtime Database → Rules
+
+Set:
+
+```json
+{
+  "rules": {
+    "sessions": {
+      "$sessionId": {
+        ".read": true,
+        ".write": true
+      }
+    }
+  }
+}
+```
+
+---
+
+### 📦 Update Storage Rules
+
+Go to:
+👉 Firebase Console → Storage → Rules
+
+Set:
+
+```js
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /sessions/{allPaths=**} {
+      allow read, write: if true;
+    }
+  }
+}
+```
+
+---
+
 ## ⚠️ Notes
 
-* Firebase is currently in **test mode** (open access)
-* Not intended for production without security rules
+* Firebase is currently in **test mode (open access)**
+* Not intended for production without proper security rules
 * File size limits depend on Firebase free tier
 
 ---
