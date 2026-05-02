@@ -16,7 +16,6 @@
       --text: #eaeaff;
       --muted: rgba(234,234,255,0.38);
       --border: rgba(255,255,255,0.07);
-      --radius: 20px;
     }
 
     html, body {
@@ -48,7 +47,7 @@
       pointer-events: none; z-index: 0;
     }
 
-    /* ─── TOP BAR ─────────────────────────────────────── */
+    /* ── TOPBAR ── */
     .topbar {
       position: relative; z-index: 10;
       display: flex;
@@ -61,106 +60,80 @@
       backdrop-filter: blur(16px);
     }
 
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-    }
+    .topbar-left { display: flex; align-items: center; gap: 24px; }
 
     .brand-sm {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: 4px;
-      color: #eaeaff;
+      font-size: 16px; font-weight: 700;
+      letter-spacing: 4px; color: #eaeaff;
       text-shadow: 0 0 12px rgba(124,92,255,0.4);
     }
 
-    .divider-v {
-      width: 1px; height: 20px;
-      background: var(--border);
-    }
+    .divider-v { width: 1px; height: 20px; background: var(--border); }
 
-    .meta {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .meta { display: flex; align-items: center; gap: 16px; }
+    .meta-item { display: flex; align-items: center; gap: 6px; }
 
     .meta-label {
-      font-size: 10px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: rgba(234,234,255,0.25);
+      font-size: 10px; letter-spacing: 1.5px;
+      text-transform: uppercase; color: rgba(234,234,255,0.25);
     }
 
     .meta-val {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 2px;
-      color: #eaeaff;
+      font-size: 14px; font-weight: 500;
+      letter-spacing: 2px; color: #eaeaff;
     }
 
     .icon-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 4px;
-      color: var(--muted);
-      transition: color 0.2s;
-      display: inline-flex;
-      align-items: center;
+      background: none; border: none; cursor: pointer;
+      padding: 4px; color: var(--muted); transition: color 0.2s;
+      display: inline-flex; align-items: center;
     }
     .icon-btn:hover { color: var(--text); }
 
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
+    .topbar-right { display: flex; align-items: center; gap: 20px; }
 
     .timer-display {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 13px;
-      letter-spacing: 2px;
-      color: #4f9cff;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 13px; letter-spacing: 2px; color: #4f9cff;
+      display: flex; align-items: center; gap: 6px;
     }
 
     .terminate-btn {
-      font-size: 12px;
-      color: #ff6b6b;
-      cursor: pointer;
-      padding: 6px 14px;
-      border-radius: 8px;
+      font-size: 12px; color: #ff6b6b; cursor: pointer;
+      padding: 6px 14px; border-radius: 8px;
       border: 1px solid rgba(255,107,107,0.2);
       background: rgba(255,107,107,0.05);
-      transition: all 0.2s;
-      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s; font-family: 'DM Sans', sans-serif;
     }
     .terminate-btn:hover {
       background: rgba(255,107,107,0.12);
       border-color: rgba(255,107,107,0.4);
     }
 
-    /* ─── WORKSPACE ──────────────────────────────────── */
+    .online-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.6);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .online-label { font-size: 11px; color: rgba(34,197,94,0.7); letter-spacing: 0.5px; }
+
+    .sync-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(124,92,255,0.3); transition: all 0.3s;
+    }
+    .sync-dot.on {
+      background: #7c5cff;
+      box-shadow: 0 0 8px rgba(124,92,255,0.8);
+      animation: syncPulse 0.6s ease-in-out infinite alternate;
+    }
+
+    /* ── WORKSPACE ── */
     .workspace {
       position: relative; z-index: 1;
       height: calc(100vh - 64px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       padding: 20px;
     }
 
@@ -175,309 +148,186 @@
         0 0 0 1px rgba(255,255,255,0.03) inset,
         0 24px 80px rgba(0,0,0,0.55),
         0 0 60px rgba(124,92,255,0.07);
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
       overflow: hidden;
       animation: boxIn 0.7s cubic-bezier(0.16,1,0.3,1) both;
     }
 
-    /* ─── TEXT INPUT AREA ────────────────────────────── */
-    .text-section {
-      padding: 20px 24px 0;
-      flex-shrink: 0;
-    }
+    /* ── TEXT AREA ── */
+    .text-section { padding: 20px 24px 0; flex-shrink: 0; }
 
     .text-area {
-      width: 100%;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: rgba(234,234,255,0.35);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      resize: none;
-      line-height: 1.6;
-      height: 52px;
-      transition: color 0.25s;
-      letter-spacing: 0.2px;
+      width: 100%; background: transparent; border: none; outline: none;
+      color: rgba(234,234,255,0.35); font-family: 'DM Sans', sans-serif;
+      font-size: 15px; resize: none; line-height: 1.6; height: 52px;
+      transition: color 0.25s; letter-spacing: 0.2px;
     }
-    .text-area:focus {
-      color: rgba(234,234,255,0.9);
-    }
-    .text-area::placeholder {
-      color: rgba(234,234,255,0.18);
-    }
+    .text-area:focus { color: rgba(234,234,255,0.9); }
+    .text-area::placeholder { color: rgba(234,234,255,0.18); }
 
-    /* Thin separator */
-    .separator {
-      height: 1px;
-      margin: 12px 24px 0;
-      background: var(--border);
-      flex-shrink: 0;
-    }
+    .separator { height: 1px; margin: 12px 24px 0; background: var(--border); flex-shrink: 0; }
 
-    /* ─── UPLOAD AREA ────────────────────────────────── */
+    /* ── UPLOAD SECTION ── */
     .upload-section {
-      flex: 1;
-      display: flex;
-      min-height: 0;
-      padding: 16px;
-      gap: 14px;
+      flex: 1; display: flex; min-height: 0;
+      padding: 16px; gap: 14px;
       transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
     }
 
-    /* BEFORE: single full drop zone */
     .drop-zone {
       flex: 1;
       border: 1.5px dashed rgba(79,156,255,0.3);
       border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      cursor: pointer;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; cursor: pointer;
       transition: all 0.3s ease;
-      position: relative;
     }
-
-    .drop-zone:hover,
-    .drop-zone.drag-over {
+    .drop-zone:hover, .drop-zone.drag-over {
       border-color: rgba(124,92,255,0.6);
       background: rgba(124,92,255,0.05);
     }
-
     .drop-zone.drag-over {
       background: rgba(124,92,255,0.1);
       box-shadow: 0 0 20px rgba(124,92,255,0.15) inset;
     }
+    .drop-icon { opacity: 0.35; transition: opacity 0.2s; }
+    .drop-zone:hover .drop-icon, .drop-zone.drag-over .drop-icon { opacity: 0.7; }
+    .drop-label { font-size: 14px; color: var(--muted); text-align: center; line-height: 1.5; }
+    .drop-sub { font-size: 11px; color: rgba(234,234,255,0.2); letter-spacing: 1px; }
 
-    .drop-icon {
-      opacity: 0.35;
-      transition: opacity 0.2s;
-    }
-    .drop-zone:hover .drop-icon,
-    .drop-zone.drag-over .drop-icon { opacity: 0.7; }
-
-    .drop-label {
-      font-size: 14px;
-      color: var(--muted);
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    .drop-sub {
-      font-size: 11px;
-      color: rgba(234,234,255,0.2);
-      letter-spacing: 1px;
-    }
-
-    /* AFTER: split layout */
+    /* File list panel */
     .file-list-panel {
-      flex: 0 0 0%;
-      overflow: hidden;
-      opacity: 0;
+      flex: 0 0 0%; overflow: hidden; opacity: 0;
       transition: flex 0.45s cubic-bezier(0.16,1,0.3,1), opacity 0.35s ease;
     }
-
-    .upload-section.has-files .file-list-panel {
-      flex: 0 0 50%;
-      opacity: 1;
-    }
-
-    .upload-section.has-files .drop-zone {
-      flex: 0 0 calc(50% - 14px);
-    }
+    .upload-section.has-files .file-list-panel { flex: 0 0 50%; opacity: 1; }
+    .upload-section.has-files .drop-zone { flex: 0 0 calc(50% - 14px); }
 
     .file-list-inner {
       height: 100%;
       background: rgba(255,255,255,0.02);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      border-radius: 16px; padding: 16px;
+      overflow-y: auto; display: flex;
+      flex-direction: column; gap: 8px;
     }
-
     .file-list-inner::-webkit-scrollbar { width: 4px; }
     .file-list-inner::-webkit-scrollbar-track { background: transparent; }
     .file-list-inner::-webkit-scrollbar-thumb { background: rgba(124,92,255,0.2); border-radius: 4px; }
 
     .file-list-header {
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 4px;
-      flex-shrink: 0;
+      font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 4px; flex-shrink: 0;
     }
 
     .file-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      display: flex; align-items: center; gap: 10px;
       padding: 10px 12px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 10px;
-      transition: background 0.2s;
+      border-radius: 10px; transition: background 0.2s;
       cursor: pointer;
       animation: fileIn 0.35s cubic-bezier(0.16,1,0.3,1) both;
     }
-
     .file-item:hover { background: rgba(124,92,255,0.08); border-color: rgba(124,92,255,0.2); }
 
     .file-icon {
-      width: 32px; height: 32px;
-      border-radius: 8px;
+      width: 32px; height: 32px; border-radius: 8px;
       background: linear-gradient(135deg, rgba(124,92,255,0.2), rgba(79,156,255,0.2));
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-
     .file-info { flex: 1; min-width: 0; }
-
-    .file-name {
-      font-size: 13px;
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .file-size {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 1px;
-    }
+    .file-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-size { font-size: 11px; color: var(--muted); margin-top: 1px; }
 
     .file-status {
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: 20px;
-      background: rgba(79,156,255,0.1);
-      color: #4f9cff;
-      letter-spacing: 0.5px;
-      flex-shrink: 0;
+      font-size: 10px; padding: 3px 8px; border-radius: 20px;
+      background: rgba(79,156,255,0.1); color: #4f9cff;
+      letter-spacing: 0.5px; flex-shrink: 0;
     }
+    .file-status.uploading { background: rgba(255,167,38,0.1); color: #ffa726; }
 
-    .file-status.uploading {
-      background: rgba(255,167,38,0.1);
-      color: #ffa726;
-    }
-
-    /* Hidden file input */
     #fileInput { display: none; }
 
-    /* Online indicator */
-    .online-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 6px rgba(34,197,94,0.6);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    .online-label {
-      font-size: 11px;
-      color: rgba(34,197,94,0.7);
-      letter-spacing: 0.5px;
-    }
-
-    /* Sync indicator */
-    .sync-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: rgba(124,92,255,0.5);
-      transition: background 0.3s;
-    }
-    .sync-dot.syncing {
-      background: #7c5cff;
-      box-shadow: 0 0 8px rgba(124,92,255,0.8);
-      animation: syncPulse 0.6s ease-in-out infinite alternate;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    @keyframes syncPulse {
-      from { opacity: 0.5; }
-      to { opacity: 1; }
-    }
-
-    @keyframes boxIn {
-      from { opacity: 0; transform: translateY(16px) scale(0.98); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    @keyframes fileIn {
-      from { opacity: 0; transform: translateX(-8px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-
-    /* Terminate modal */
+    /* ── MODAL ── */
     .modal-overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+      z-index: 100; align-items: center; justify-content: center;
     }
     .modal-overlay.show { display: flex; }
 
     .modal {
-      background: rgba(18,18,36,0.95);
+      background: rgba(18,18,36,0.97);
       border: 1px solid rgba(255,107,107,0.2);
-      border-radius: 20px;
-      padding: 32px;
-      width: min(360px, 90vw);
-      text-align: center;
+      border-radius: 20px; padding: 32px;
+      width: min(360px, 90vw); text-align: center;
       box-shadow: 0 20px 60px rgba(0,0,0,0.6);
       animation: cardIn 0.4s cubic-bezier(0.16,1,0.3,1) both;
     }
-
-    .modal h3 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
+    .modal h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; margin-bottom: 10px; }
     .modal p { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
     .modal-btns { display: flex; gap: 10px; }
+
     .modal-cancel {
-      flex: 1; padding: 12px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.05);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.2s;
+      flex: 1; padding: 12px; border-radius: 10px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.05);
+      color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 14px; cursor: pointer; transition: background 0.2s;
     }
     .modal-cancel:hover { background: rgba(255,255,255,0.09); }
+    .modal-cancel:disabled { opacity: 0.4; cursor: not-allowed; }
+
     .modal-confirm {
-      flex: 1; padding: 12px;
-      border-radius: 10px;
-      border: none;
-      background: #ff4d4d;
-      color: white;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      cursor: pointer;
-      transition: opacity 0.2s;
+      flex: 1; padding: 12px; border-radius: 10px; border: none;
+      background: #ff4d4d; color: white;
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      cursor: pointer; transition: opacity 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .modal-confirm:hover { opacity: 0.85; }
-    .modal-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
+    .modal-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    /* ── FULL-SCREEN DELETING OVERLAY ── */
+    .deleting-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(6,6,15,0.85); backdrop-filter: blur(10px);
+      z-index: 200; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px;
+    }
+    .deleting-overlay.show { display: flex; }
+
+    .del-spinner {
+      width: 44px; height: 44px;
+      border: 3px solid rgba(255,77,77,0.2);
+      border-top-color: #ff4d4d;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .del-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px; letter-spacing: 3px;
+      color: rgba(234,234,255,0.5);
+      text-transform: uppercase;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes spin   { to { transform: rotate(360deg); } }
+    @keyframes pulse  { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+    @keyframes syncPulse { from { opacity:0.5; } to { opacity:1; } }
+    @keyframes boxIn  {
+      from { opacity:0; transform: translateY(16px) scale(0.98); }
+      to   { opacity:1; transform: translateY(0) scale(1); }
+    }
+    @keyframes fileIn {
+      from { opacity:0; transform: translateX(-8px); }
+      to   { opacity:1; transform: translateX(0); }
+    }
     @keyframes cardIn {
-      from { opacity: 0; transform: scale(0.96) translateY(10px); }
-      to   { opacity: 1; transform: scale(1) translateY(0); }
+      from { opacity:0; transform: scale(0.96) translateY(10px); }
+      to   { opacity:1; transform: scale(1) translateY(0); }
     }
   </style>
 </head>
@@ -494,59 +344,48 @@
           <span class="meta-val" id="topSid">------</span>
         </div>
         <div class="meta-item">
-          <span class="meta-label">Pass</span>
+          <span class="meta-label">PASS</span>
           <span class="meta-val" id="topPass">····</span>
-          <button class="icon-btn" id="eyeBtn" onclick="togglePass()" title="Toggle password">
+          <button class="icon-btn" id="eyeBtn" onclick="togglePass()">
             <svg id="eyeIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+              <circle cx="12" cy="12" r="3"/>
             </svg>
           </button>
         </div>
       </div>
     </div>
-
     <div class="topbar-right">
       <div style="display:flex;align-items:center;gap:6px">
         <div class="online-dot"></div>
         <span class="online-label">Live</span>
       </div>
-      <div style="display:flex;align-items:center;gap:6px">
-        <div class="sync-dot" id="syncDot"></div>
-      </div>
+      <div class="sync-dot" id="syncDot"></div>
       <div class="timer-display">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity="0.5">
           <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
         </svg>
-        <span id="timerVal">24:00:00</span>
+        <span id="timerVal">--:--:--</span>
       </div>
-      <button class="terminate-btn" onclick="showTerminate()">Terminate</button>
+      <button class="terminate-btn" id="terminateBtn">Terminate</button>
     </div>
   </div>
 
   <!-- WORKSPACE -->
   <div class="workspace">
     <div class="box">
-
-      <!-- Shared text -->
       <div class="text-section">
-        <textarea class="text-area" id="sharedText" placeholder="Type something to share with everyone in this session..." rows="2"></textarea>
+        <textarea class="text-area" id="sharedText"
+          placeholder="Type something to share with everyone in this session..."></textarea>
       </div>
-
       <div class="separator"></div>
-
-      <!-- Upload -->
       <div class="upload-section" id="uploadSection">
-
-        <!-- File list panel (left, hidden until files exist) -->
         <div class="file-list-panel" id="fileListPanel">
           <div class="file-list-inner" id="fileListInner">
             <div class="file-list-header">Shared Files</div>
-            <!-- file items injected here -->
           </div>
         </div>
-
-        <!-- Drop zone (full width initially, then right half) -->
-        <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <div class="drop-zone" id="dropZone">
           <div class="drop-icon">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4f9cff" stroke-width="1.5">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -559,9 +398,7 @@
             <span class="drop-sub">or click to browse</span>
           </div>
         </div>
-
       </div>
-
       <input type="file" id="fileInput" multiple>
     </div>
   </div>
@@ -570,286 +407,367 @@
   <div class="modal-overlay" id="terminateModal">
     <div class="modal">
       <h3>Terminate Session?</h3>
-      <p>This will permanently delete the session and all shared files. All collaborators will lose access immediately.</p>
+      <p>This permanently deletes all files and shared text. All collaborators lose access immediately.</p>
       <div class="modal-btns">
-        <button class="modal-cancel" onclick="hideTerminate()">Cancel</button>
-        <button class="modal-confirm" onclick="confirmTerminate()">Terminate</button>
+        <button class="modal-cancel" id="cancelBtn">Cancel</button>
+        <button class="modal-confirm" id="confirmBtn">
+          <span id="confirmText">Terminate</span>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, onValue, update, remove, get }
-                                from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-    import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL, deleteObject, listAll }
-                                from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+  <!-- Deleting overlay -->
+  <div class="deleting-overlay" id="deletingOverlay">
+    <div class="del-spinner"></div>
+    <div class="del-text">Deleting Session…</div>
+  </div>
 
-    // ⚠️ Replace with your Firebase config
+  <!-- ════════════════════════════════════════════════════
+       FIREBASE  —  all logic lives here
+  ════════════════════════════════════════════════════ -->
+  <script type="module">
+
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+    import { getDatabase, ref, onValue, update, remove, get }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    import { getStorage, ref as sRef,
+             uploadBytesResumable, getDownloadURL,
+             deleteObject, listAll }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    /* ── CONFIG ── */
     const firebaseConfig = {
-      apiKey: "AIzaSyAk9FYvpAyb2BT5IF29CcKDl7TB5TxKqAU",
-      authDomain: "sharon-6b796.firebaseapp.com",
-      databaseURL: "https://sharon-6b796-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "sharon-6b796",
-      storageBucket: "sharon-6b796.firebasestorage.app",
+      apiKey:            "AIzaSyAk9FYvpAyb2BT5IF29CcKDl7TB5TxKqAU",
+      authDomain:        "sharon-6b796.firebaseapp.com",
+      databaseURL:       "https://sharon-6b796-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId:         "sharon-6b796",
+      storageBucket:     "sharon-6b796.firebasestorage.app",
       messagingSenderId: "281766985130",
-      appId: "1:281766985130:web:088538f7a5b5d27379ffd3",
-      measurementId: "G-QNCTMVWXW2"
+      appId:             "1:281766985130:web:088538f7a5b5d27379ffd3"
     };
 
     const app     = initializeApp(firebaseConfig);
     const db      = getDatabase(app);
     const storage = getStorage(app);
 
-    // ─── Get session ID from URL
-    const params    = new URLSearchParams(window.location.search);
-    const sessionId = params.get('id');
+    /* ── HELPERS ── */
+    const $  = id => document.getElementById(id);
+    const pad = n  => String(n).padStart(2, '0');
 
-    if (!sessionId) {
-      window.location.href = 'index.html';
+    function formatBytes(b) {
+      if (!b)       return '—';
+      if (b < 1024) return b + ' B';
+      if (b < 1e6)  return (b / 1024).toFixed(1) + ' KB';
+      return (b / 1e6).toFixed(1) + ' MB';
     }
 
-    const sessionRef = ref(db, `sessions/${sessionId}`);
-    let sessionPass  = '';
-    let passHidden   = true;
-    let timerInterval;
-    let textDebounce;
-    let isRemoteUpdate = false;
+    function escHtml(s) {
+      return s.replace(/[&<>"']/g, c =>
+        ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
 
-    // ─── Load session & verify
-    get(sessionRef).then(snap => {
-      if (!snap.exists()) {
-        alert('Session not found or expired.');
-        window.location.href = 'index.html';
-        return;
-      }
-      const s = snap.val();
-      if (Date.now() > s.expiresAt) {
-        alert('This session has expired.');
-        window.location.href = 'index.html';
-        return;
-      }
+    function setSyncing(on) {
+      $('syncDot').classList.toggle('on', on);
+    }
 
-      sessionPass = s.password;
-      document.getElementById('topSid').textContent  = sessionId;
-      document.getElementById('topPass').textContent = '····';
-      startTimer(s.expiresAt);
-    });
+    /* ── SESSION ID FROM URL ── */
+    const sessionId = new URLSearchParams(window.location.search).get('id');
 
-    // ─── Real-time text sync
-    onValue(ref(db, `sessions/${sessionId}/text`), snap => {
-      const val = snap.val() || '';
-      const el  = document.getElementById('sharedText');
-      if (el !== document.activeElement) {
-        isRemoteUpdate = true;
-        el.value = val;
-        isRemoteUpdate = false;
-      }
-    });
+    if (!sessionId) {
+      alert('No session ID found.');
+      window.location.href = 'index.html';
+      // stop script
+      throw new Error('abort');
+    }
 
-    document.getElementById('sharedText').addEventListener('input', () => {
-      if (isRemoteUpdate) return;
+    const sessionRef = ref(db, 'sessions/' + sessionId);
+
+    /* ── STATE ── */
+    let sessionPass   = '';
+    let passHidden    = true;
+    let timerInterval = null;
+    let textTimer     = null;
+    let skipTextSync  = false;   // true while we are the ones typing
+
+    /* ══════════════════════════════════════════
+       STEP 1 — load session once, then wire up
+    ══════════════════════════════════════════ */
+    get(sessionRef)
+      .then(snap => {
+
+        if (!snap.exists()) {
+          alert('Session not found or has expired.');
+          window.location.href = 'index.html';
+          return;
+        }
+
+        const data = snap.val();
+
+        if (Date.now() > data.expiresAt) {
+          alert('This session has expired.');
+          window.location.href = 'index.html';
+          return;
+        }
+
+        /* Show ID + password in topbar */
+        sessionPass = data.password;
+        $('topSid').textContent  = sessionId;
+        $('topPass').textContent = '····';
+
+        /* Start the countdown */
+        startTimer(data.expiresAt);
+
+        /* Wire up real-time listeners */
+        wireListeners();
+
+      })
+      .catch(err => {
+        console.error('Firebase get error:', err);
+        alert('Could not connect to Firebase. Check console.');
+      });
+
+    /* ══════════════════════════════════════════
+       STEP 2 — real-time listeners
+    ══════════════════════════════════════════ */
+    function wireListeners() {
+
+      /* Live text */
+      onValue(ref(db, 'sessions/' + sessionId + '/text'), snap => {
+        if (skipTextSync) return;           // user is typing — ignore remote
+        const txt = snap.val() || '';
+        const el  = $('sharedText');
+        if (document.activeElement !== el) {
+          el.value = txt;
+        }
+      });
+
+      /* Live files */
+      onValue(ref(db, 'sessions/' + sessionId + '/files'), snap => {
+        renderFiles(snap.val() || {});
+      });
+    }
+
+    /* ══════════════════════════════════════════
+       STEP 3 — text input → Firebase (debounced)
+    ══════════════════════════════════════════ */
+    $('sharedText').addEventListener('input', () => {
+      skipTextSync = true;
       setSyncing(true);
-      clearTimeout(textDebounce);
-      textDebounce = setTimeout(() => {
-        update(sessionRef, { text: document.getElementById('sharedText').value })
-          .then(() => setSyncing(false));
+      clearTimeout(textTimer);
+      textTimer = setTimeout(() => {
+        update(sessionRef, { text: $('sharedText').value })
+          .then(() => {
+            setSyncing(false);
+            skipTextSync = false;
+          })
+          .catch(() => { setSyncing(false); skipTextSync = false; });
       }, 400);
     });
 
-    // ─── Real-time file list sync
-    onValue(ref(db, `sessions/${sessionId}/files`), snap => {
-      const files = snap.val() || {};
-      renderFiles(files);
-    });
-
+    /* ══════════════════════════════════════════
+       STEP 4 — render file list
+    ══════════════════════════════════════════ */
     function renderFiles(files) {
-      const keys = Object.keys(files);
-      const inner = document.getElementById('fileListInner');
-      const section = document.getElementById('uploadSection');
+      const inner   = $('fileListInner');
+      const section = $('uploadSection');
+      const keys    = Object.keys(files);
 
-      // Remove old file items (keep header)
+      /* Remove previous file rows, keep the header */
       inner.querySelectorAll('.file-item').forEach(el => el.remove());
 
-      if (keys.length > 0) {
-        section.classList.add('has-files');
-        keys.forEach(key => {
-          const f = files[key];
-          const item = document.createElement('div');
-          item.className = 'file-item';
-          item.innerHTML = `
-            <div class="file-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c5cff" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-              </svg>
-            </div>
-            <div class="file-info">
-              <div class="file-name">${escapeHtml(f.name)}</div>
-              <div class="file-size">${formatBytes(f.size)}</div>
-            </div>
-            <span class="file-status">${f.uploading ? 'Uploading...' : 'Ready'}</span>
-          `;
-          if (f.status === 'uploading') {
-            item.querySelector('.file-status').classList.add('uploading');
-          }
-          if (f.url) {
-            item.onclick = () => window.open(f.url, '_blank');
-          }
-          inner.appendChild(item);
-        });
-      } else {
+      if (keys.length === 0) {
         section.classList.remove('has-files');
+        return;
       }
+
+      section.classList.add('has-files');
+
+      keys.forEach(key => {
+        const f    = files[key];
+        const item = document.createElement('div');
+        item.className = 'file-item';
+        item.innerHTML =
+          '<div class="file-icon">' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c5cff" stroke-width="2">' +
+              '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
+              '<polyline points="14 2 14 8 20 8"/>' +
+            '</svg>' +
+          '</div>' +
+          '<div class="file-info">' +
+            '<div class="file-name">' + escHtml(f.name) + '</div>' +
+            '<div class="file-size">' + formatBytes(f.size) + '</div>' +
+          '</div>' +
+          '<span class="file-status' + (f.uploading ? ' uploading' : '') + '">' +
+            (f.uploading ? 'Uploading…' : 'Ready') +
+          '</span>';
+
+        if (f.url) {
+          item.title   = 'Click to download';
+          item.onclick = () => window.open(f.url, '_blank');
+        }
+        inner.appendChild(item);
+      });
     }
 
-    // ─── File upload
+    /* ══════════════════════════════════════════
+       STEP 5 — file upload
+    ══════════════════════════════════════════ */
     function handleFiles(fileList) {
       Array.from(fileList).forEach(file => {
-        const key       = `file_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
-        const storePath = `sessions/${sessionId}/${key}_${file.name}`;
-        const fileRef   = ref(db, `sessions/${sessionId}/files/${key}`);
+        const key       = 'f_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+        const storePath = 'sessions/' + sessionId + '/' + key + '_' + file.name;
+        const fileDbRef = ref(db, 'sessions/' + sessionId + '/files/' + key);
 
-        // Optimistic UI
-        update(fileRef, { name: file.name, size: file.size, uploading: true, url: null });
+        /* Optimistic: show immediately as "uploading" */
+        update(fileDbRef, {
+          name:        file.name,
+          size:        file.size,
+          uploading:   true,
+          url:         null,
+          storagePath: storePath
+        });
 
-        const uploadTask = uploadBytesResumable(sRef(storage, storePath), file);
+        const task = uploadBytesResumable(sRef(storage, storePath), file);
 
-        uploadTask.on('state_changed',
+        task.on('state_changed',
           null,
-          err => console.error(err),
-          async () => {
-            const url = await getDownloadURL(uploadTask.snapshot.ref);
-            update(fileRef, { uploading: false, url });
+          err => {
+            console.error('Upload failed:', err);
+            remove(fileDbRef);      /* clean failed entry */
+          },
+          () => {
+            getDownloadURL(task.snapshot.ref).then(url => {
+              update(fileDbRef, { uploading: false, url: url });
+            });
           }
         );
       });
     }
 
-    // ─── Drag & Drop
-    const dropZone = document.getElementById('dropZone');
+    /* ── Drop zone wiring ── */
+    const dropZone  = $('dropZone');
+    const fileInput = $('fileInput');
+
+    dropZone.addEventListener('click', () => fileInput.click());
 
     dropZone.addEventListener('dragover', e => {
       e.preventDefault();
       dropZone.classList.add('drag-over');
     });
 
-    dropZone.addEventListener('dragleave', () => {
-      dropZone.classList.remove('drag-over');
+    dropZone.addEventListener('dragleave', e => {
+      if (!dropZone.contains(e.relatedTarget))
+        dropZone.classList.remove('drag-over');
     });
 
     dropZone.addEventListener('drop', e => {
       e.preventDefault();
       dropZone.classList.remove('drag-over');
-      handleFiles(e.dataTransfer.files);
+      if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
     });
 
-    document.getElementById('fileInput').addEventListener('change', e => {
-      handleFiles(e.target.files);
+    fileInput.addEventListener('change', e => {
+      if (e.target.files.length) handleFiles(e.target.files);
       e.target.value = '';
     });
 
-    // ─── Timer
+    /* ══════════════════════════════════════════
+       STEP 6 — countdown timer
+       NOTE: tick() is a plain sync function —
+       NO await inside it (that was the bug).
+       Cleanup on expiry is done via a separate async fn.
+    ══════════════════════════════════════════ */
     function startTimer(expiresAt) {
       function tick() {
-        const rem = Math.max(0, expiresAt - Date.now());
-        const h   = Math.floor(rem / 3600000);
-        const m   = Math.floor((rem % 3600000) / 60000);
-        const s   = Math.floor((rem % 60000) / 1000);
-        document.getElementById('timerVal').textContent =
-          `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        const rem = expiresAt - Date.now();
+
         if (rem <= 0) {
           clearInterval(timerInterval);
-          // Clean up storage on natural expiry too
-          try {
-            const folderRef = sRef(storage, `sessions/${sessionId}`);
-            const list = await listAll(folderRef);
-            await Promise.all(list.items.map(item => deleteObject(item)));
-          } catch(e) {}
-          await remove(sessionRef).catch(() => {});
-          alert('Session expired. All data has been deleted.');
-          window.location.href = 'index.html';
+          $('timerVal').textContent = '00:00:00';
+          doCleanupAndRedirect('Session expired. All data deleted.');
+          return;
         }
+
+        const h = Math.floor(rem / 3_600_000);
+        const m = Math.floor((rem % 3_600_000) / 60_000);
+        const s = Math.floor((rem % 60_000)    / 1_000);
+        $('timerVal').textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
       }
-      tick();
+
+      tick();   /* run immediately so number appears at once */
       timerInterval = setInterval(tick, 1000);
     }
 
-    // ─── Password toggle
-    window.togglePass = function() {
-      const el   = document.getElementById('topPass');
-      const icon = document.getElementById('eyeIcon');
-      passHidden = !passHidden;
-      el.textContent = passHidden ? '····' : sessionPass;
-      icon.innerHTML = passHidden
-        ? `<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>`
-        : `<path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a17.5 17.5 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a16.6 16.6 0 0 1-1.67 2.68"/><path d="M1 1l22 22"/>`;
-    };
-
-    // ─── Terminate
-    window.showTerminate = function() {
-      document.getElementById('terminateModal').classList.add('show');
-    };
-
-    window.hideTerminate = function() {
-      document.getElementById('terminateModal').classList.remove('show');
-    };
-
-    window.confirmTerminate = async function() {
-      // Show deleting state in modal
-      const confirmBtn = document.querySelector('.modal-confirm');
-      const cancelBtn  = document.querySelector('.modal-cancel');
-      confirmBtn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 0.7s linear infinite"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg>Deleting...</span>';
-      confirmBtn.disabled = true;
-      cancelBtn.disabled  = true;
-
+    /* ══════════════════════════════════════════
+       STEP 7 — full cleanup (async, separate)
+    ══════════════════════════════════════════ */
+    async function doCleanupAndRedirect(alertMsg) {
+      /* Delete all Storage files */
       try {
-        // 1. Read all file metadata from DB to get storage paths
-        const snap  = await get(sessionRef);
-        const files = snap.exists() ? (snap.val().files || {}) : {};
+        const folder = sRef(storage, 'sessions/' + sessionId);
+        const list   = await listAll(folder);
+        const dels   = list.items.map(item => deleteObject(item));
 
-        // 2. Delete every file in Firebase Storage under sessions/<sessionId>/
-        const folderRef = sRef(storage, `sessions/${sessionId}`);
-        try {
-          const list = await listAll(folderRef);
-          await Promise.all(list.items.map(item => deleteObject(item)));
-          // Also delete sub-folders (shouldn't exist but just in case)
-          await Promise.all(list.prefixes.map(async prefix => {
-            const sub = await listAll(prefix);
-            return Promise.all(sub.items.map(item => deleteObject(item)));
-          }));
-        } catch (storageErr) {
-          // Storage folder may not exist if no files were uploaded — that's fine
-          console.log('Storage cleanup:', storageErr.code);
+        /* Also handle any unexpected sub-folders */
+        for (const prefix of list.prefixes) {
+          const sub = await listAll(prefix);
+          sub.items.forEach(item => dels.push(deleteObject(item)));
         }
-
-        // 3. Delete the Realtime Database session node (text, files metadata, etc.)
-        await remove(sessionRef);
-
-      } catch (err) {
-        console.error('Terminate error:', err);
-      } finally {
-        window.location.href = 'index.html';
+        await Promise.all(dels);
+      } catch (e) {
+        /* Folder may not exist — that's fine */
+        console.log('Storage cleanup note:', e.code || e.message);
       }
+
+      /* Delete the Realtime DB node */
+      try { await remove(sessionRef); }
+      catch (e) { console.error('DB remove:', e); }
+
+      if (alertMsg) alert(alertMsg);
+      window.location.href = 'index.html';
+    }
+
+    /* ══════════════════════════════════════════
+       STEP 8 — password toggle (exposed global)
+    ══════════════════════════════════════════ */
+    window.togglePass = function () {
+      passHidden = !passHidden;
+      $('topPass').textContent = passHidden ? '····' : sessionPass;
+      $('eyeIcon').innerHTML   = passHidden
+        ? '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>'
+        : '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a17.5 17.5 0 0 1 5.06-5.94"/>' +
+          '<path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a16.6 16.6 0 0 1-1.67 2.68"/>' +
+          '<path d="M1 1l22 22"/>';
     };
 
-    // ─── Sync indicator
-    function setSyncing(val) {
-      document.getElementById('syncDot').classList.toggle('syncing', val);
-    }
+    /* ══════════════════════════════════════════
+       STEP 9 — terminate flow
+    ══════════════════════════════════════════ */
+    $('terminateBtn').addEventListener('click', () => {
+      $('terminateModal').classList.add('show');
+    });
 
-    // ─── Helpers
-    function formatBytes(bytes) {
-      if (!bytes) return '—';
-      if (bytes < 1024) return `${bytes} B`;
-      if (bytes < 1048576) return `${(bytes/1024).toFixed(1)} KB`;
-      return `${(bytes/1048576).toFixed(1)} MB`;
-    }
+    $('cancelBtn').addEventListener('click', () => {
+      $('terminateModal').classList.remove('show');
+    });
 
-    function escapeHtml(str) {
-      return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    }
+    $('confirmBtn').addEventListener('click', async () => {
+      /* Disable buttons so user can't double-click */
+      $('confirmBtn').disabled = true;
+      $('cancelBtn').disabled  = true;
+      $('confirmText').textContent = 'Deleting…';
+
+      /* Hide modal, show full-screen deleting overlay */
+      $('terminateModal').classList.remove('show');
+      $('deletingOverlay').classList.add('show');
+
+      await doCleanupAndRedirect(null);   /* null = no alert, just redirect */
+    });
+
   </script>
 </body>
 </html>
