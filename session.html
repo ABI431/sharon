@@ -510,6 +510,50 @@
 
     const sessionRef = ref(db, 'sessions/' + sessionId);
 
+    /* ══════════════════════════════════════════
+       ORPHAN CLEANUP — runs silently on every page load
+       Scans all sessions, finds expired ones, deletes
+       their Storage files + DB nodes.
+       This is the free-tier substitute for Cloud Functions.
+       Firebase TTL handles DB deletion server-side,
+       but Storage needs a client-side trigger.
+    ══════════════════════════════════════════ */
+    async function cleanupExpiredSessions() {
+      try {
+        const allSnap = await get(ref(db, 'sessions'));
+        if (!allSnap.exists()) return;
+
+        const allSessions = allSnap.val();
+        const now         = Date.now();
+
+        for (const [sid, data] of Object.entries(allSessions)) {
+          if (!data.expiresAt || now <= data.expiresAt) continue;  // not expired yet
+
+          /* Delete Storage folder for this expired session */
+          try {
+            const folder = sRef(storage, 'sessions/' + sid);
+            const list   = await listAll(folder);
+            await Promise.all(list.items.map(item => deleteObject(item)));
+            for (const prefix of list.prefixes) {
+              const sub = await listAll(prefix);
+              await Promise.all(sub.items.map(item => deleteObject(item)));
+            }
+          } catch (e) { /* no files — fine */ }
+
+          /* Remove DB node */
+          try { await remove(ref(db, 'sessions/' + sid)); } catch (e) { /* fine */ }
+
+          console.log('Auto-cleaned expired session:', sid);
+        }
+      } catch (e) {
+        /* Fail silently — this is background maintenance */
+        console.log('Orphan cleanup skipped:', e.message);
+      }
+    }
+
+    /* Run cleanup in background — don't await, don't block UI */
+    cleanupExpiredSessions();
+
     /* ── STATE ── */
     let sessionPass   = '';
     let passHidden    = true;
