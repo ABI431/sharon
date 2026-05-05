@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>SHARON — Temporary Collaboration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -241,56 +242,6 @@
   <script>
     document.getElementById('createBtn').onclick = () => window.location.href = 'create.html';
     document.getElementById('joinBtn').onclick  = () => window.location.href = 'join.html';
-  </script>
-
-  <!-- Silent background cleanup of expired sessions -->
-  <script type="module">
-    import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, get, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-    import { getStorage, ref as sRef, listAll, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-
-    const firebaseConfig = {
-      apiKey:            "AIzaSyAk9FYvpAyb2BT5IF29CcKDl7TB5TxKqAU",
-      authDomain:        "sharon-6b796.firebaseapp.com",
-      databaseURL:       "https://sharon-6b796-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId:         "sharon-6b796",
-      storageBucket:     "sharon-6b796.firebasestorage.app",
-      messagingSenderId: "281766985130",
-      appId:             "1:281766985130:web:088538f7a5b5d27379ffd3"
-    };
-
-    const app     = initializeApp(firebaseConfig);
-    const db      = getDatabase(app);
-    const storage = getStorage(app);
-
-    /* Runs silently — does not block page or show any UI */
-    (async () => {
-      try {
-        const snap = await get(ref(db, 'sessions'));
-        if (!snap.exists()) return;
-
-        const now  = Date.now();
-
-        for (const [sid, data] of Object.entries(snap.val())) {
-          if (!data.expiresAt || now <= data.expiresAt) continue;
-
-          /* Delete Storage files */
-          try {
-            const list = await listAll(sRef(storage, 'sessions/' + sid));
-            await Promise.all(list.items.map(i => deleteObject(i)));
-            for (const prefix of list.prefixes) {
-              const sub = await listAll(prefix);
-              await Promise.all(sub.items.map(i => deleteObject(i)));
-            }
-          } catch (e) {}
-
-          /* Delete DB node */
-          try { await remove(ref(db, 'sessions/' + sid)); } catch (e) {}
-
-          console.log('[SHARON] Cleaned expired session:', sid);
-        }
-      } catch (e) {}
-    })();
   </script>
 </body>
 </html>
