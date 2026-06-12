@@ -9,6 +9,7 @@ It is designed for quick, temporary collaboration — lightweight, fast, and acc
 ## 🚀 Live Application
 
 👉 https://abi431.github.io/sharon/index.html
+(Live demo currently unavailable due to exhausted credits.)
 
 ---
 
